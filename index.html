@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Englishy — English Placement Test</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&family=Sarabun:wght@300;400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--purple:#5B21B6;--violet:#7C3AED;--teal:#0D9488;--slate:#64748B;--bg:#F8F7FF;--border:rgba(91,33,182,0.12);--text:#1E1B4B;--muted:#64748B;--correct:#0D9488;--wrong:#DC2626;}
+body{font-family:'DM Sans','Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:60px;}
+#cover{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;background:linear-gradient(145deg,#F8F7FF,#EDE9FE);}
+#cover.active{display:flex;}
+.brand-logo{font-family:'DM Serif Display',serif;font-size:2.4rem;color:var(--purple);margin-bottom:0.2rem;}
+.brand-tag{font-size:0.75rem;font-weight:500;color:var(--teal);letter-spacing:2px;text-transform:uppercase;margin-bottom:2rem;}
+.cover-card{background:white;border-radius:20px;padding:2.5rem;max-width:520px;width:100%;border:1px solid var(--border);box-shadow:0 4px 40px rgba(91,33,182,0.08);}
+.cover-card h2{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--purple);margin-bottom:0.2rem;}
+.th{font-family:'Sarabun',sans-serif;font-size:0.95rem;color:var(--teal);margin-bottom:0.75rem;}
+.cover-card p{font-size:0.88rem;color:var(--muted);line-height:1.65;margin-bottom:0.3rem;}
+.th-p{font-family:'Sarabun',sans-serif;font-size:0.85rem;color:var(--slate);margin-bottom:1.25rem;}
+.form-group{margin-bottom:1rem;}
+.form-group label{display:block;font-size:0.8rem;font-weight:500;color:var(--slate);margin-bottom:3px;}
+.th-label{font-family:'Sarabun',sans-serif;font-weight:400;color:var(--teal);font-size:0.78rem;margin-left:4px;}
+.form-group input,.form-group select{width:100%;padding:0.7rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans','Sarabun',sans-serif;font-size:0.92rem;color:var(--text);background:var(--bg);outline:none;transition:border-color 0.2s;}
+.form-group input:focus,.form-group select:focus{border-color:var(--violet);}
+.btn-primary{width:100%;padding:0.82rem;background:var(--purple);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;transition:background 0.2s;margin-top:0.5rem;}
+.btn-primary:hover{background:var(--violet);}
+.nav-links{display:flex;gap:0.5rem;justify-content:center;padding:0.75rem 0 0;flex-wrap:wrap;}
+.nav-link{font-size:0.78rem;color:var(--violet);cursor:pointer;padding:0.3rem 0.6rem;border:none;background:none;font-family:'DM Sans',sans-serif;text-decoration:underline;text-underline-offset:2px;}
+#resume-screen{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;background:linear-gradient(145deg,#F8F7FF,#EDE9FE);}
+#resume-screen.active{display:flex;}
+#test-screen{max-width:680px;margin:0 auto;padding:1.5rem 1rem 5rem;display:none;}
+#test-screen.active{display:block;}
+.test-header{display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.25rem;background:white;border-radius:14px;border:1px solid var(--border);margin-bottom:1.25rem;position:sticky;top:8px;z-index:10;box-shadow:0 2px 12px rgba(91,33,182,0.07);}
+.test-brand{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--purple);}
+.progress-wrap{flex:1;margin:0 1rem;}
+.progress-bar{height:5px;background:#EDE9FE;border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--teal));border-radius:99px;transition:width 0.4s ease;}
+.progress-label{font-size:0.7rem;color:var(--muted);margin-top:3px;text-align:right;}
+.save-status{font-size:0.68rem;color:var(--teal);font-weight:500;white-space:nowrap;}
+.resume-footer{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--border);padding:0.55rem 1.25rem;display:none;align-items:center;justify-content:center;gap:0.75rem;z-index:100;box-shadow:0 -2px 12px rgba(91,33,182,0.07);}
+.resume-footer.visible{display:flex;}
+.resume-footer-label{font-size:0.7rem;color:var(--muted);font-family:'Sarabun',sans-serif;}
+.resume-footer-code{font-size:0.92rem;font-weight:500;color:var(--purple);letter-spacing:2px;}
+.resume-footer-hint{font-size:0.68rem;color:var(--slate);font-family:'Sarabun',sans-serif;}
+.question-card{background:white;border-radius:16px;padding:1.5rem;margin-bottom:1rem;border:1px solid var(--border);}
+.q-num{font-size:0.7rem;font-weight:500;color:var(--violet);letter-spacing:1px;text-transform:uppercase;margin-bottom:0.5rem;}
+.q-text{font-size:0.97rem;line-height:1.65;color:var(--text);margin-bottom:1rem;}
+.options{display:flex;flex-direction:column;gap:0.45rem;}
+.option{display:flex;align-items:center;gap:0.75rem;padding:0.62rem 1rem;border-radius:10px;border:1.5px solid var(--border);cursor:pointer;transition:all 0.15s;font-size:0.9rem;color:var(--text);background:var(--bg);user-select:none;}
+.option:hover{border-color:var(--violet);background:#F5F3FF;}
+.option.selected{border-color:var(--purple);background:#EDE9FE;color:var(--purple);font-weight:500;}
+.option-letter{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--muted);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:500;flex-shrink:0;}
+.option.selected .option-letter{border-color:var(--purple);color:var(--purple);}
+.submit-wrap{text-align:center;margin-top:2rem;}
+.btn-submit{padding:0.9rem 3rem;background:var(--purple);color:white;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;cursor:pointer;}
+.btn-submit:hover{background:var(--violet);}
+.unanswered-note{font-size:0.82rem;color:var(--wrong);margin-top:0.6rem;display:none;font-family:'Sarabun',sans-serif;}
+#result-screen{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;background:linear-gradient(145deg,#F8F7FF,#EDE9FE);}
+#result-screen.active{display:flex;}
+.result-card{background:white;border-radius:20px;padding:2.5rem;max-width:460px;width:100%;border:1px solid var(--border);box-shadow:0 4px 40px rgba(91,33,182,0.08);text-align:center;}
+.result-icon{width:72px;height:72px;background:#EDE9FE;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:2rem;}
+.result-card h2{font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--purple);margin-bottom:0.3rem;}
+.score-ring{width:130px;height:130px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 1.25rem;}
+.score-ring .score-num{font-family:'DM Serif Display',serif;font-size:2.4rem;color:white;line-height:1;}
+.score-ring .score-denom{font-size:0.8rem;color:rgba(255,255,255,0.8);margin-top:2px;}
+.level-display{display:inline-block;padding:0.45rem 1.5rem;background:#EDE9FE;color:var(--purple);border-radius:99px;font-size:1rem;font-weight:500;margin-bottom:0.5rem;}
+.level-th{font-family:'Sarabun',sans-serif;font-size:0.85rem;color:var(--teal);margin-bottom:1.25rem;}
+.result-msg{font-size:0.87rem;color:var(--muted);line-height:1.65;margin-bottom:0.4rem;}
+.result-msg-th{font-family:'Sarabun',sans-serif;font-size:0.85rem;color:var(--slate);line-height:1.65;margin-bottom:1.5rem;}
+.code-display{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;margin-top:0.75rem;}
+.code-display p{font-size:0.75rem;color:var(--muted);}
+.code-display .code{font-size:1.3rem;font-weight:500;color:var(--purple);letter-spacing:3px;margin:3px 0;}
+#teacher-login{min-height:80vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;}
+#teacher-login.active{display:flex;}
+.login-card{background:white;border-radius:16px;padding:2rem;max-width:380px;width:100%;border:1px solid var(--border);}
+.login-card h3{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--purple);margin-bottom:0.4rem;}
+.login-card p{font-size:0.85rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.5;}
+.err-msg{font-size:0.82rem;color:var(--wrong);margin-top:0.5rem;display:none;}
+#teacher-screen{max-width:840px;margin:0 auto;padding:1.5rem 1rem 4rem;display:none;}
+#teacher-screen.active{display:block;}
+.tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:1.5px solid var(--border);}
+.tab{padding:0.6rem 1.25rem;font-size:0.84rem;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;transition:all 0.15s;}
+.tab.active{color:var(--purple);border-bottom-color:var(--purple);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.teacher-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem;}
+.teacher-top h1{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--purple);}
+.teacher-top p{font-size:0.8rem;color:var(--muted);margin-top:2px;}
+.btn-sm{padding:0.45rem 1rem;background:none;border:1.5px solid var(--border);border-radius:8px;font-size:0.8rem;color:var(--slate);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-sm:hover{border-color:var(--violet);color:var(--violet);}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1.5rem;}
+.stat-card{background:white;border-radius:14px;padding:1rem 1.1rem;border:1px solid var(--border);text-align:center;}
+.stat-label{font-size:0.68rem;font-weight:500;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem;}
+.stat-value{font-size:1.6rem;font-weight:300;color:var(--purple);font-family:'DM Serif Display',serif;}
+.stat-sub{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+.level-badge{display:inline-block;padding:0.3rem 0.9rem;border-radius:99px;font-size:0.8rem;font-weight:500;background:#EDE9FE;color:var(--purple);margin-top:4px;}
+.section-title{font-size:0.68rem;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:0.75rem;margin-top:1.5rem;}
+.topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;margin-bottom:1.5rem;}
+.topic-pill{background:white;border:1px solid var(--border);border-radius:10px;padding:0.55rem 0.85rem;display:flex;align-items:center;justify-content:space-between;font-size:0.83rem;}
+.topic-score{font-size:0.75rem;font-weight:500;padding:2px 8px;border-radius:99px;}
+.topic-score.good{background:#CCFBF1;color:#0F766E;}
+.topic-score.mid{background:#FEF3C7;color:#92400E;}
+.topic-score.low{background:#FEE2E2;color:#991B1B;}
+.results-table{width:100%;border-collapse:separate;border-spacing:0;background:white;border-radius:14px;border:1px solid var(--border);overflow:hidden;font-size:0.83rem;}
+.results-table th{background:#F5F3FF;padding:0.65rem 0.9rem;text-align:left;font-size:0.67rem;font-weight:500;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);}
+.results-table td{padding:0.58rem 0.9rem;border-bottom:1px solid rgba(91,33,182,0.06);vertical-align:middle;}
+.results-table tr:last-child td{border-bottom:none;}
+.results-table tr:hover td{background:#FDFCFF;}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;vertical-align:middle;margin-right:4px;}
+.dot.correct{background:var(--correct);}
+.dot.wrong{background:var(--wrong);}
+.dot.blank{background:#CBD5E1;}
+.filter-bar{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center;}
+.filter-select{padding:0.45rem 0.8rem;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--text);background:white;cursor:pointer;outline:none;}
+.filter-select:focus{border-color:var(--violet);}
+.analytics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem;margin-bottom:1.25rem;}
+.a-stat{background:white;border-radius:12px;padding:0.85rem 1rem;border:1px solid var(--border);text-align:center;}
+.a-stat .val{font-size:1.35rem;font-weight:300;color:var(--purple);font-family:'DM Serif Display',serif;}
+.a-stat .lbl{font-size:0.67rem;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-top:2px;}
+.weakness-list{background:white;border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:1.25rem;}
+.weakness-row{display:flex;align-items:center;padding:0.6rem 1rem;border-bottom:1px solid rgba(91,33,182,0.06);gap:0.75rem;}
+.weakness-row:last-child{border-bottom:none;}
+.w-rank{font-size:0.72rem;color:var(--muted);width:18px;flex-shrink:0;text-align:right;}
+.w-name{font-size:0.83rem;color:var(--text);flex:1;}
+.w-bar-wrap{width:120px;height:6px;background:#EDE9FE;border-radius:99px;overflow:hidden;flex-shrink:0;}
+.w-bar{height:100%;border-radius:99px;}
+.w-pct{font-size:0.72rem;font-weight:500;width:34px;text-align:right;flex-shrink:0;}
+.dist-wrap{background:white;border-radius:14px;border:1px solid var(--border);padding:1.25rem;margin-bottom:1.25rem;}
+.dist-bars{display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:0.75rem;}
+.dist-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.dist-bar-fill{width:100%;border-radius:4px 4px 0 0;background:var(--purple);min-height:2px;}
+.dist-bar-label{font-size:0.58rem;color:var(--muted);text-align:center;line-height:1.2;}
+.dist-bar-count{font-size:0.65rem;color:var(--purple);font-weight:500;}
+.lookup-wrap{display:flex;gap:0.5rem;margin-bottom:1.25rem;}
+.lookup-wrap input{flex:1;padding:0.65rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;}
+.lookup-wrap input:focus{border-color:var(--violet);}
+.btn-lookup{padding:0.65rem 1.1rem;background:var(--purple);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.83rem;cursor:pointer;white-space:nowrap;}
+.student-list{background:white;border-radius:14px;border:1px solid var(--border);overflow:hidden;}
+.student-row{display:flex;align-items:center;padding:0.7rem 1rem;border-bottom:1px solid rgba(91,33,182,0.06);gap:0.75rem;cursor:pointer;transition:background 0.1s;flex-wrap:wrap;}
+.student-row:last-child{border-bottom:none;}
+.student-row:hover{background:#FDFCFF;}
+.s-name{font-size:0.87rem;font-weight:500;color:var(--text);flex:1;min-width:120px;}
+.s-meta{font-size:0.72rem;color:var(--muted);}
+.s-level{font-size:0.7rem;padding:2px 8px;border-radius:99px;background:#EDE9FE;color:var(--purple);font-weight:500;white-space:nowrap;}
+.s-status{font-size:0.68rem;padding:2px 7px;border-radius:99px;font-weight:500;white-space:nowrap;}
+.s-status.done{background:#CCFBF1;color:#0F766E;}
+.s-status.progress{background:#FEF3C7;color:#92400E;}
+.empty-msg{padding:1.5rem;text-align:center;color:var(--muted);font-size:0.85rem;}
+@media(max-width:520px){.summary-grid{grid-template-columns:1fr 1fr;}.analytics-grid{grid-template-columns:1fr 1fr;}.topic-grid{grid-template-columns:1fr;}.w-bar-wrap{width:70px;}}
+@media print{#teacher-login,#cover,#test-screen,#result-screen,#resume-screen,.resume-footer{display:none!important;}.btn-sm,.tabs,.filter-bar,.lookup-wrap{display:none!important;}#teacher-screen{display:block!important;padding:0;}.tab-content{display:block!important;}}
+</style>
+</head>
+<body>
+<div id="cover" class="active">
+  <div class="brand-logo">Englishy</div>
+  <div class="brand-tag">English Placement Test</div>
+  <div class="cover-card">
+    <h2>Welcome to the Placement Test</h2>
+    <div class="th">ยินดีต้อนรับสู่แบบทดสอบวัดระดับภาษาอังกฤษ</div>
+    <p>This test has 50 questions. There is no time limit. If you need to leave, you can resume later using your email address.</p>
+    <p class="th-p">แบบทดสอบนี้มี 50 ข้อ ไม่มีการจำกัดเวลา หากต้องการออกสามารถกลับมาทำต่อได้โดยใช้อีเมล รหัสสำรองของคุณจะแสดงที่ด้านล่างของทุกหน้า</p>
+    <div class="form-group"><label>Full Name <span class="th-label">/ ชื่อ-นามสกุล</span></label><input type="text" id="s-name" placeholder="e.g. Somchai Jaidee / สมชาย ใจดี"></div>
+    <div class="form-group"><label>Email <span class="th-label">/ อีเมล</span></label><input type="email" id="s-email" placeholder="yourname@email.com"></div>
+    <div class="form-group">
+      <label>Age Range <span class="th-label">/ ช่วงอายุ</span></label>
+      <select id="s-age">
+        <option value="">-- Select / เลือกช่วงอายุ --</option>
+        <option value="Under 12">Under 12 / ต่ำกว่า 12 ปี</option>
+        <option value="12-15">12–15</option><option value="16-18">16–18</option>
+        <option value="19-22">19–22</option><option value="23-30">23–30</option>
+        <option value="31-40">31–40</option><option value="41+">41+</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Education Level <span class="th-label">/ ระดับการศึกษา</span></label>
+      <select id="s-edu">
+        <option value="">-- Select / เลือกระดับการศึกษา --</option>
+        <option value="Primary school">Primary school / ประถม</option>
+        <option value="Grade 7">Grade 7 / ม.1</option><option value="Grade 8">Grade 8 / ม.2</option>
+        <option value="Grade 9">Grade 9 / ม.3</option><option value="Grade 10">Grade 10 / ม.4</option>
+        <option value="Grade 11">Grade 11 / ม.5</option><option value="Grade 12">Grade 12 / ม.6</option>
+        <option value="Vocational">Vocational / ปวช.</option>
+        <option value="High Vocational">High Vocational / ปวส.</option>
+        <option value="Bachelor's Degree">Bachelor's Degree / ป.ตรี</option>
+        <option value="Master's Degree">Master's Degree / ป.โท</option>
+        <option value="Doctorate/PhD">Doctorate / PhD / ป.เอก</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="startTest()">Start Test / เริ่มทำแบบทดสอบ →</button>
+    <div class="nav-links">
+      <button class="nav-link" onclick="showResume()">Resume my test / ทำต่อจากเดิม</button>
+      <button class="nav-link" onclick="showTeacherLogin()">Teacher login</button>
+    </div>
+  </div>
+</div>
+
+<div id="resume-screen">
+  <div class="cover-card">
+    <h2 style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--purple);margin-bottom:0.2rem;">Resume Your Test</h2>
+    <div class="th">ทำแบบทดสอบต่อจากเดิม</div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:0.25rem;">Enter the email address you used when you started.</p>
+    <p style="font-family:'Sarabun',sans-serif;font-size:0.83rem;color:var(--slate);margin-bottom:1.25rem;">กรอกอีเมลที่ใช้ตอนเริ่มทำแบบทดสอบ</p>
+    <div class="form-group"><label>Email / อีเมล</label><input type="email" id="resume-email" placeholder="yourname@email.com" onkeydown="if(event.key==='Enter')resumeTest()"></div>
+    <div id="resume-loading" style="font-size:0.82rem;color:var(--teal);display:none;margin-bottom:0.5rem;font-family:'Sarabun',sans-serif;">กำลังโหลด... / Loading your answers...</div>
+    <div id="resume-err" style="font-size:0.82rem;color:var(--wrong);display:none;font-family:'Sarabun',sans-serif;">ไม่พบข้อมูล กรุณาตรวจสอบอีเมล / Email not found.</div>
+    <button class="btn-primary" onclick="resumeTest()">Load my answers / โหลดคำตอบของฉัน</button>
+    <div class="nav-links"><button class="nav-link" onclick="showCover()">← Back / กลับ</button></div>
+  </div>
+</div>
+
+<div id="test-screen">
+  <div class="test-header">
+    <div class="test-brand">Englishy</div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="progress-label" id="prog-label">0 / 50 answered</div>
+    </div>
+    <div class="save-status" id="save-status">● Ready</div>
+  </div>
+  <div id="questions-container"></div>
+  <div class="submit-wrap">
+    <button class="btn-submit" onclick="submitTest()">Submit Test / ส่งแบบทดสอบ</button>
+    <div class="unanswered-note" id="unanswered-note">Please answer all 50 questions before submitting. / กรุณาตอบให้ครบ 50 ข้อก่อนส่ง</div>
+  </div>
+</div>
+
+<div class="resume-footer" id="resume-footer">
+  <span class="resume-footer-label">รหัสสำรอง / Resume code:</span>
+  <span class="resume-footer-code" id="footer-code">—</span>
+  <span class="resume-footer-hint">· บันทึกรหัสนี้ไว้ / Save this code</span>
+</div>
+
+<div id="result-screen">
+  <div class="result-card">
+    <div class="result-icon">🎉</div>
+    <h2>Test Complete!</h2>
+    <div class="th">ทำแบบทดสอบเสร็จแล้ว!</div>
+    <div class="score-ring"><div class="score-num" id="res-score">—</div><div class="score-denom">out of 50</div></div>
+    <div class="level-display" id="res-level">—</div>
+    <div class="level-th" id="res-level-th"></div>
+    <p class="result-msg">Your results have been recorded. Your teacher will be in touch to confirm your class placement.</p>
+    <p class="result-msg-th">ผลคะแนนของคุณถูกบันทึกแล้ว คุณครูจะติดต่อกลับเพื่อแจ้งรายละเอียดการเรียนในระดับที่เหมาะสมกับคุณ</p>
+    <div class="code-display">
+      <p>Resume code / รหัสสำรองของคุณ</p>
+      <div class="code" id="res-code">—</div>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:2px;">เก็บรหัสนี้ไว้ในกรณีที่ต้องการกลับมาแก้ไข</p>
+    </div>
+  </div>
+</div>
+
+<div id="teacher-login">
+  <div class="login-card">
+    <h3>Teacher Dashboard</h3>
+    <p>Enter the teacher password to view results and analytics.</p>
+    <div class="form-group"><label>Password</label><input type="password" id="teacher-pwd" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPassword()"></div>
+    <button class="btn-primary" onclick="checkPassword()">View Results</button>
+    <div class="err-msg" id="pwd-err">Incorrect password. Please try again.</div>
+    <div class="nav-links"><button class="nav-link" onclick="showCover()">← Back to test</button></div>
+  </div>
+</div>
+
+<div id="teacher-screen">
+  <div class="teacher-top">
+    <div><h1>Englishy — Teacher Dashboard</h1><p id="teacher-info">Loading...</p></div>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <button class="btn-sm" onclick="window.print()">Print / Export</button>
+      <button class="btn-sm" onclick="showCover()">← New test</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('individual')">Individual Result</button>
+    <button class="tab" onclick="switchTab('analytics')">Class Analytics</button>
+    <button class="tab" onclick="switchTab('lookup')">Student Lookup</button>
+  </div>
+  <div class="tab-content active" id="tab-individual">
+    <div class="summary-grid">
+      <div class="stat-card"><div class="stat-label">Total Score</div><div class="stat-value" id="r-score">—</div><div class="stat-sub">out of 50</div></div>
+      <div class="stat-card"><div class="stat-label">Percentage</div><div class="stat-value" id="r-pct">—</div><div class="stat-sub">correct</div></div>
+      <div class="stat-card"><div class="stat-label">Recommended Level</div><div class="stat-sub" style="margin-top:6px"><span class="level-badge" id="r-level">—</span></div></div>
+    </div>
+    <div class="section-title">Performance by Topic</div>
+    <div class="topic-grid" id="topic-grid"></div>
+    <div class="section-title">Question-by-Question Breakdown</div>
+    <table class="results-table">
+      <thead><tr><th>#</th><th>Topic / Skill</th><th>Student Answer</th><th>Correct Answer</th><th>Result</th></tr></thead>
+      <tbody id="results-tbody"></tbody>
+    </table>
+  </div>
+  <div class="tab-content" id="tab-analytics">
+    <div class="filter-bar">
+      <select class="filter-select" id="filter-age" onchange="renderAnalytics()">
+        <option value="">All Ages</option>
+        <option value="Under 12">Under 12</option><option value="12-15">12–15</option>
+        <option value="16-18">16–18</option><option value="19-22">19–22</option>
+        <option value="23-30">23–30</option><option value="31-40">31–40</option><option value="41+">41+</option>
+      </select>
+      <select class="filter-select" id="filter-edu" onchange="renderAnalytics()">
+        <option value="">All Education Levels</option>
+        <option value="Primary">Primary / ประถม</option>
+        <option value="Lower Secondary">Lower Secondary / ม.1–3</option>
+        <option value="Upper Secondary">Upper Secondary / ม.4–6</option>
+        <option value="Vocational">Vocational / ปวช.–ปวส.</option>
+        <option value="Higher Education">Higher Education / ป.ตรี–ป.เอก</option>
+      </select>
+      <span id="analytics-count" style="font-size:0.78rem;color:var(--muted);"></span>
+    </div>
+    <div class="analytics-grid" id="analytics-stats"></div>
+    <div class="section-title">Topic Weakness Ranking (most difficult first)</div>
+    <div class="weakness-list" id="weakness-list"></div>
+    <div class="section-title">Score Distribution</div>
+    <div class="dist-wrap">
+      <div style="font-size:0.73rem;color:var(--muted);">Students per score band</div>
+      <div class="dist-bars" id="dist-bars"></div>
+    </div>
+  </div>
+  <div class="tab-content" id="tab-lookup">
+    <div class="lookup-wrap">
+      <input type="text" id="lookup-input" placeholder="Search by name or email..." oninput="filterStudents()">
+      <button class="btn-lookup" onclick="loadAllStudents()">↻ Refresh</button>
+    </div>
+    <div class="student-list" id="student-list"><div class="empty-msg">Click Refresh to load all students.</div></div>
+  </div>
+</div>
+
+<script>
+const SHEET_URL="https://script.google.com/macros/s/AKfycbysH_SVOOYKw789TY9F5ONmg31Vr7Ykscx6u82Xajtj9mBOT-I-st0lARF559qBsjEq/exec";
+const TEACHER_PASSWORD="englishy2026";
+const EDU_GROUPS={"Primary school":"Primary","Grade 7":"Lower Secondary","Grade 8":"Lower Secondary","Grade 9":"Lower Secondary","Grade 10":"Upper Secondary","Grade 11":"Upper Secondary","Grade 12":"Upper Secondary","Vocational":"Vocational","High Vocational":"Vocational","Bachelor's Degree":"Higher Education","Master's Degree":"Higher Education","Doctorate/PhD":"Higher Education"};
+const LEVELS=[{min:0,max:18,label:"Elementary"},{min:19,max:25,label:"Pre-Intermediate"},{min:26,max:32,label:"Intermediate"},{min:33,max:39,label:"Upper Intermediate"},{min:40,max:46,label:"Advanced"},{min:47,max:50,label:"Higher Level"}];
+const LEVEL_TH={"Elementary":"ระดับเริ่มต้น","Pre-Intermediate":"ระดับก่อนกลาง","Intermediate":"ระดับกลาง","Upper Intermediate":"ระดับกลาง-สูง","Advanced":"ระดับสูง","Higher Level":"ระดับสูงมาก"};
+const questions=[
+  {text:"I'm 18 and my brother is 20, so he's ........ me.",options:["the oldest of","older than","as old as"],answer:"b",topic:"Comparison"},
+  {text:"Carl's very ........ . He's never late, and he never forgets to do things.",options:["reliable","patient","strict"],answer:"a",topic:"Vocabulary"},
+  {text:"We stayed in a lovely villa ........ the sea.",options:["it overlooks","overlooked","overlooking"],answer:"c",topic:"Participles"},
+  {text:"Not until the 1980s ........ for the average person to own a computer.",options:["it was possible","was it possible","was possible"],answer:"b",topic:"Word Order / Inversion"},
+  {text:"Jan ........ her arm on a hot iron.",options:["broke","burned","sprained"],answer:"b",topic:"Vocabulary"},
+  {text:"Tomorrow's a holiday, so we ........ go to work.",options:["have to","mustn't","don't have to"],answer:"c",topic:"Modal Verbs"},
+  {text:"I usually ........ swimming at least once a week.",options:["go","do","play"],answer:"a",topic:"Verb Collocations"},
+  {text:"My friend Siena ........ to Russia last year.",options:["went","has gone","has been"],answer:"a",topic:"Tenses"},
+  {text:"This is ........ area, with a lot of factories and warehouses.",options:["an agricultural","an industrial","a residential"],answer:"b",topic:"Vocabulary"},
+  {text:"If I ........ well in my exams, I ........ to university.",options:["will do / will go","will do / go","do / will go"],answer:"c",topic:"Conditionals"},
+  {text:"She was so upset that she burst ........ tears.",options:["into","out","with"],answer:"a",topic:"Phrasal Verbs / Prepositions"},
+  {text:"Where did you go ........ holiday last year?",options:["for","on","to"],answer:"b",topic:"Prepositions"},
+  {text:"Ocean currents ........ play an important part in regulating global climate.",options:["are known to","thought to","are believed that they"],answer:"a",topic:"Passive Voice"},
+  {text:"My cousin ........ getting a job in Bahrain.",options:["would like","is planning","is thinking of"],answer:"c",topic:"Verb Patterns"},
+  {text:"I can't ........ your hair, because I haven't got any scissors.",options:["brush","cut","wash"],answer:"b",topic:"Vocabulary"},
+  {text:"I wish I ........ have an exam tomorrow!",options:["don't","didn't","won't"],answer:"b",topic:"Wish Clauses"},
+  {text:"The government plans to ........ taxes on sales of luxury items.",options:["increase","expand","go up"],answer:"a",topic:"Vocabulary"},
+  {text:"When I first moved to Hong Kong, life was very strange, but now I'm used ........ here.",options:["living","to live","to living"],answer:"c",topic:"Used to / Be Used to"},
+  {text:"There ........ milk in the fridge.",options:["is some","are some","is a"],answer:"a",topic:"Uncountable Nouns"},
+  {text:"Criminals are people who are guilty of ........ the law.",options:["breaking","cheating","committing"],answer:"a",topic:"Vocabulary"},
+  {text:"Why on earth isn't Josh here yet? ........ for him for over an hour!",options:["I'm waiting","I've been waiting","I've waited"],answer:"b",topic:"Tenses"},
+  {text:'"It\'s pouring down, and it\'s freezing." What are the weather conditions?',options:["high winds and snow","heavy rain and cold temperatures","thick cloud but quite warm"],answer:"b",topic:"Vocabulary / Context"},
+  {text:"........ feeling OK? You don't look very well.",options:["Do you","You are","Are you"],answer:"c",topic:"Subject-Verb Agreement"},
+  {text:"Daniel's hair is getting far too long; he should ........ soon.",options:["cut it","have cut it","have it cut"],answer:"c",topic:"Causative Verbs"},
+  {text:"Mandy works for a computer software company. She got ........ recently, and now she's an area manager.",options:["made redundant","promoted","a raise"],answer:"b",topic:"Vocabulary"},
+  {text:"I can't hear you – it's ........ noisy in here.",options:["too","too much","too many"],answer:"a",topic:"Adverbs of Degree"},
+  {text:"Jamal has just sent me ........ to arrange plans for this weekend.",options:["a blog","an email","a website"],answer:"b",topic:"Vocabulary"},
+  {text:"I promise I'll call you as soon as I ........ .",options:["arrive","arrived","I'll arrive"],answer:"a",topic:"Future Time Clauses"},
+  {text:"Photographers and designers need to be very ........ .",options:["creative","fit","annoying"],answer:"a",topic:"Vocabulary"},
+  {text:"The global financial crisis, ........ is forcing lots of small businesses to close, does not look set to end soon.",options:["it","that","which"],answer:"c",topic:"Relative Clauses"},
+  {text:"There ........ a terrible accident if the pilot hadn't reacted so quickly.",options:["had been","was","would have been"],answer:"c",topic:"Conditionals"},
+  {text:'"Are you ready to order?" "Not yet – I\'m still looking at the ........ ."',options:["bill","menu","service"],answer:"b",topic:"Vocabulary"},
+  {text:'"My job is never boring." The speaker\'s job is always ........ .',options:["interesting","popular","difficult"],answer:"a",topic:"Vocabulary / Context"},
+  {text:"I've been working here ............... two years.",options:["during","for","since"],answer:"b",topic:"Prepositions"},
+  {text:'"It leaves from Platform 2 at 4.15." The speaker is talking about ........ .',options:["an airline flight","a train","a taxi"],answer:"b",topic:"Vocabulary / Context"},
+  {text:"I went to a lovely ........ last Saturday. The bride was my best friend at school.",options:["anniversary","marriage","wedding"],answer:"c",topic:"Vocabulary"},
+  {text:'"I\'ve got a headache." "Maybe you ........ to take an aspirin."',options:["should","ought","don't"],answer:"b",topic:"Modal Verbs"},
+  {text:"The patient had an ........ to insert metal pins in his broken leg.",options:["injection","operation","X-ray"],answer:"b",topic:"Vocabulary"},
+  {text:"She won a seat in parliament at the last ........ .",options:["general election","opinion poll","referendum"],answer:"a",topic:"Vocabulary"},
+  {text:"I'm surprised you didn't get upset. If someone said that to me, ........ really angry.",options:["I'm","I was","I would be"],answer:"c",topic:"Conditionals"},
+  {text:"This used to be ........ part of the city, but since renovation it's become very fashionable.",options:["an affluent","a run-down","a trendy"],answer:"b",topic:"Vocabulary"},
+  {text:"Cassie went to bed early because she was ........ .",options:["tired","stressed","relaxed"],answer:"a",topic:"Vocabulary"},
+  {text:"In the 1960s, computers were ........ expensive that ordinary people couldn't afford them.",options:["so","such","too"],answer:"a",topic:"So / Such / Too"},
+  {text:"Do you want ........ the match tonight?",options:["watching","watch","to watch"],answer:"c",topic:"Infinitive vs Gerund"},
+  {text:"Researchers claim the new discovery is a major ........ in the fight against malaria.",options:["breakthrough","investigation","progress"],answer:"a",topic:"Vocabulary"},
+  {text:"The Maths problem was really difficult and I just couldn't ........ the answer.",options:["check in","set off","work out"],answer:"c",topic:"Phrasal Verbs"},
+  {text:"When I was a child, I never ........ about the future.",options:["have worried","used to worry","was worrying"],answer:"b",topic:"Used to / Past Habits"},
+  {text:"A local politician has ........ charges of corruption made by the opposition party.",options:["accused","blamed","denied"],answer:"c",topic:"Vocabulary"},
+  {text:"........ worries me about society today is how completely we depend on technology.",options:["That","What","Which"],answer:"b",topic:"Noun Clauses"},
+  {text:"Cats and dogs are usually kept as ........ .",options:["farm animals","wild animals","pets"],answer:"c",topic:"Vocabulary"}
+];
+
+let sd={name:"",email:"",age:"",edu:"",resumeCode:""};
+let answers=new Array(50).fill(null);
+let testResults=null;
+let allStudents=[];
+let saveTimer=null;
+
+function getLevel(s){return LEVELS.find(l=>s>=l.min&&s<=l.max)?.label||"—";}
+function genCode(){return "ENG-"+Math.floor(1000+Math.random()*9000);}
+
+// POST for saving — no URL length limit, all 50 answers go through safely
+async function saveToSheet(payload){
+  const res=await fetch(SHEET_URL,{method:'POST',body:JSON.stringify(payload)});
+  return await res.json();
+}
+
+// GET for loading — simple email param only, no payload size issue
+async function loadFromSheet(email){
+  const res=await fetch(`${SHEET_URL}?action=load&email=${encodeURIComponent(email)}`);
+  return await res.json();
+}
+
+function hideAll(){
+  ['cover','resume-screen','test-screen','result-screen','teacher-login','teacher-screen'].forEach(id=>{
+    const el=document.getElementById(id);el.classList.remove('active');el.style.display='';
+  });
+  document.getElementById('resume-footer').classList.remove('visible');
+}
+function showCover(){hideAll();document.getElementById('cover').classList.add('active');}
+function showResume(){hideAll();const r=document.getElementById('resume-screen');r.style.display='flex';r.classList.add('active');}
+function showTeacherLogin(){hideAll();const t=document.getElementById('teacher-login');t.style.display='flex';t.classList.add('active');}
+
+function startTest(){
+  const name=document.getElementById('s-name').value.trim();
+  const email=document.getElementById('s-email').value.trim();
+  const age=document.getElementById('s-age').value;
+  const edu=document.getElementById('s-edu').value;
+  if(!name||!email||!email.includes('@')||!age||!edu){
+    if(!name)document.getElementById('s-name').style.borderColor='var(--wrong)';
+    if(!email||!email.includes('@'))document.getElementById('s-email').style.borderColor='var(--wrong)';
+    return;
+  }
+  sd={name,email,age,edu,resumeCode:genCode()};
+  answers=new Array(50).fill(null);
+  renderQuestions();hideAll();
+  document.getElementById('test-screen').style.display='block';
+  document.getElementById('test-screen').classList.add('active');
+  document.getElementById('footer-code').textContent=sd.resumeCode;
+  document.getElementById('resume-footer').classList.add('visible');
+  window.scrollTo(0,0);
+  saveProgress("In Progress");
+}
+
+async function resumeTest(){
+  const email=document.getElementById('resume-email').value.trim();
+  const err=document.getElementById('resume-err');
+  const loading=document.getElementById('resume-loading');
+  err.style.display='none';if(!email)return;loading.style.display='block';
+  try{
+    const data=await loadFromSheet(email);
+    loading.style.display='none';
+    if(data.status==='found'&&data.data){
+      const d=data.data;
+      sd={name:d.name,email:d.email,age:d.age||'',edu:d.edu||'',resumeCode:d.resumeCode};
+      answers=Array.from({length:50},(_,i)=>d.answers[i]||null);
+      renderQuestions();
+      answers.forEach((a,i)=>{if(a){const el=document.getElementById(`opt-${i}-${a}`);if(el){el.classList.add('selected');lockOthers(i,a);}}});
+      updateProgress();hideAll();
+      document.getElementById('test-screen').style.display='block';
+      document.getElementById('test-screen').classList.add('active');
+      document.getElementById('footer-code').textContent=sd.resumeCode;
+      document.getElementById('resume-footer').classList.add('visible');
+      window.scrollTo(0,0);
+    } else {err.style.display='block';}
+  } catch(e){loading.style.display='none';err.style.display='block';}
+}
+
+function renderQuestions(){
+  const c=document.getElementById('questions-container');c.innerHTML='';
+  questions.forEach((q,i)=>{
+    const L=['a','b','c'];
+    const opts=q.options.map((o,oi)=>`<div class="option" id="opt-${i}-${L[oi]}" onclick="selectOption(${i},'${L[oi]}')" ><span class="option-letter">${L[oi].toUpperCase()}</span><span>${o}</span></div>`).join('');
+    c.innerHTML+=`<div class="question-card"><div class="q-num">Question ${i+1} of 50</div><div class="q-text">${q.text}</div><div class="options">${opts}</div></div>`;
+  });
+}
+
+function selectOption(qi,letter){
+  ['a','b','c'].forEach(l=>{const el=document.getElementById(`opt-${qi}-${l}`);if(el){el.classList.remove('selected');el.style.opacity='1';}});
+  answers[qi]=letter;
+  document.getElementById(`opt-${qi}-${letter}`)?.classList.add('selected');
+  lockOthers(qi,letter);updateProgress();
+  clearTimeout(saveTimer);saveTimer=setTimeout(()=>saveProgress("In Progress"),2500);
+}
+
+function lockOthers(qi,sel){['a','b','c'].forEach(l=>{if(l!==sel){const el=document.getElementById(`opt-${qi}-${l}`);if(el)el.style.opacity='0.55';}});}
+
+function updateProgress(){
+  const n=answers.filter(a=>a!==null).length;
+  document.getElementById('prog-fill').style.width=(n/50*100)+'%';
+  document.getElementById('prog-label').textContent=`${n} / 50 answered`;
+}
+
+async function saveProgress(status){
+  const ss=document.getElementById('save-status');
+  if(ss){ss.textContent='● Saving...';ss.style.color='var(--slate)';}
+  const score=status==='Completed'?calcScore():null;
+  try{
+    await saveToSheet({
+      type:'save_progress',resumeCode:sd.resumeCode,name:sd.name,email:sd.email,
+      age:sd.age,edu:sd.edu,date:new Date().toLocaleDateString('en-GB'),
+      status,answers,score,
+      percentage:score!==null?Math.round(score/50*100)+'%':null,
+      level:score!==null?getLevel(score):null,
+      topicSummary:buildTopicSummary()
+    });
+    if(ss){ss.textContent='● Saved ✓';ss.style.color='var(--correct)';}
+  } catch(e){if(ss){ss.textContent='● Save failed';ss.style.color='var(--wrong)';}}
+}
+
+function calcScore(){return answers.filter((a,i)=>a===questions[i].answer).length;}
+
+function buildTopicSummary(){
+  const m={};
+  questions.forEach((q,i)=>{if(!m[q.topic])m[q.topic]={c:0,t:0};m[q.topic].t++;if(answers[i]===q.answer)m[q.topic].c++;});
+  const out={};Object.entries(m).forEach(([t,v])=>{out[t]=`${v.c}/${v.t}`;});return out;
+}
+
+async function submitTest(){
+  const n=answers.filter(a=>a!==null).length;
+  if(n<50){document.getElementById('unanswered-note').style.display='block';return;}
+  await saveProgress('Completed');
+  const score=calcScore();const level=getLevel(score);
+  testResults={score,level,name:sd.name,email:sd.email,age:sd.age,edu:sd.edu,
+    details:questions.map((q,i)=>{const ua=answers[i];return{q:i+1,topic:q.topic,userAnswer:ua,correctAnswer:q.answer,correct:ua===q.answer};})};
+  document.getElementById('res-score').textContent=score;
+  document.getElementById('res-level').textContent=level;
+  document.getElementById('res-level-th').textContent=LEVEL_TH[level]||'';
+  document.getElementById('res-code').textContent=sd.resumeCode;
+  hideAll();const rs=document.getElementById('result-screen');rs.style.display='flex';rs.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function checkPassword(){
+  const pwd=document.getElementById('teacher-pwd').value;
+  const err=document.getElementById('pwd-err');
+  if(pwd===TEACHER_PASSWORD){
+    err.style.display='none';hideAll();renderTeacherIndividual();
+    const ts=document.getElementById('teacher-screen');ts.style.display='block';ts.classList.add('active');
+    loadAllStudents();window.scrollTo(0,0);
+  } else {err.style.display='block';}
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',['individual','analytics','lookup'][i]===name);});
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='analytics')renderAnalytics();
+}
+
+function renderTeacherIndividual(){
+  if(!testResults){
+    document.getElementById('teacher-info').textContent='No test submitted in this session. Use Student Lookup to find a student.';
+    document.getElementById('r-score').textContent='—';document.getElementById('r-pct').textContent='—';document.getElementById('r-level').textContent='—';
+    document.getElementById('results-tbody').innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:1.5rem;font-size:0.84rem;">Use the Student Lookup tab to select a student.</td></tr>';
+    document.getElementById('topic-grid').innerHTML='';return;
+  }
+  const{score,level,details,name,email,age,edu}=testResults;
+  document.getElementById('teacher-info').textContent=`${name} · ${email} · ${age} · ${edu}`;
+  document.getElementById('r-score').textContent=score;
+  document.getElementById('r-pct').textContent=Math.round(score/50*100)+'%';
+  document.getElementById('r-level').textContent=level;
+  const tm={};details.forEach(d=>{if(!tm[d.topic])tm[d.topic]={c:0,t:0};tm[d.topic].t++;if(d.correct)tm[d.topic].c++;});
+  document.getElementById('topic-grid').innerHTML=Object.entries(tm).map(([t,v])=>{
+    const p=v.c/v.t;const cls=p>=0.7?'good':p>=0.4?'mid':'low';
+    return`<div class="topic-pill"><span>${t}</span><span class="topic-score ${cls}">${v.c}/${v.t}</span></div>`;
+  }).join('');
+  document.getElementById('results-tbody').innerHTML=details.map(d=>{
+    const ua=d.userAnswer?d.userAnswer.toUpperCase():'—';const ca=d.correctAnswer.toUpperCase();
+    const dc=!d.userAnswer?'blank':d.correct?'correct':'wrong';
+    const rt=!d.userAnswer?'Blank':d.correct?'Correct':'Incorrect';
+    return`<tr><td style="color:var(--muted);font-size:0.76rem">${d.q}</td><td>${d.topic}</td><td style="font-weight:500">${ua}</td><td style="color:var(--correct);font-weight:500">${ca}</td><td><span class="dot ${dc}"></span><span style="font-size:0.76rem;color:var(--muted)">${rt}</span></td></tr>`;
+  }).join('');
+}
+
+async function loadAllStudents(){
+  document.getElementById('student-list').innerHTML='<div class="empty-msg">Loading from Google Sheets...</div>';
+  try{
+    const data=await loadFromSheet('__ALL__');
+    if(data.status==='all'&&data.students){
+      allStudents=data.students;renderStudentList(allStudents);renderAnalytics();
+      document.getElementById('teacher-info').textContent=`${allStudents.length} student(s) · ${allStudents.filter(s=>s.status==='Completed').length} completed`;
+    } else {document.getElementById('student-list').innerHTML='<div class="empty-msg">No students found yet.</div>';}
+  } catch(e){document.getElementById('student-list').innerHTML='<div class="empty-msg">Could not connect to Google Sheets. Please check your script URL.</div>';}
+}
+
+function renderStudentList(students){
+  if(!students||!students.length){document.getElementById('student-list').innerHTML='<div class="empty-msg">No students found.</div>';return;}
+  document.getElementById('student-list').innerHTML=students.map((s,i)=>`
+    <div class="student-row" onclick="viewStudent(${i})">
+      <div style="flex:1;min-width:120px"><div class="s-name">${s.name||'—'}</div><div class="s-meta">${s.email||''} · ${s.age||''} · ${s.edu||''}</div></div>
+      <span class="s-level">${s.level||'—'}</span>
+      <span class="s-status ${s.status==='Completed'?'done':'progress'}">${s.status||'—'}</span>
+    </div>`).join('');
+}
+
+function filterStudents(){
+  const q=document.getElementById('lookup-input').value.toLowerCase();
+  renderStudentList(allStudents.filter(s=>(s.name||'').toLowerCase().includes(q)||(s.email||'').toLowerCase().includes(q)));
+}
+
+function viewStudent(idx){
+  const s=allStudents[idx];if(!s)return;
+  const score=parseInt(s.score)||0;
+  testResults={score,level:s.level||getLevel(score),name:s.name,email:s.email,age:s.age,edu:s.edu,
+    details:questions.map((q,i)=>{
+      const ua=s.answers&&s.answers[i]?(s.answers[i]+'').toLowerCase().trim():null;
+      return{q:i+1,topic:q.topic,userAnswer:ua||null,correctAnswer:q.answer,correct:ua===q.answer};
+    })};
+  renderTeacherIndividual();switchTab('individual');window.scrollTo(0,0);
+}
+
+function renderAnalytics(){
+  const ageF=document.getElementById('filter-age')?.value||'';
+  const eduF=document.getElementById('filter-edu')?.value||'';
+  let students=allStudents.filter(s=>s.status==='Completed');
+  if(ageF)students=students.filter(s=>s.age===ageF);
+  if(eduF)students=students.filter(s=>EDU_GROUPS[s.edu]===eduF);
+  document.getElementById('analytics-count').textContent=`${students.length} student(s)`;
+  if(!students.length){
+    document.getElementById('analytics-stats').innerHTML='<div style="grid-column:1/-1;padding:1rem;color:var(--muted);font-size:0.84rem;">No completed tests match this filter.</div>';
+    document.getElementById('weakness-list').innerHTML='';document.getElementById('dist-bars').innerHTML='';return;
+  }
+  const scores=students.map(s=>parseInt(s.score)||0);
+  const avg=Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+  const lc={};students.forEach(s=>{const l=s.level||getLevel(parseInt(s.score)||0);lc[l]=(lc[l]||0)+1;});
+  const topLevel=Object.entries(lc).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
+  document.getElementById('analytics-stats').innerHTML=`
+    <div class="a-stat"><div class="val">${students.length}</div><div class="lbl">Students</div></div>
+    <div class="a-stat"><div class="val">${avg}/50</div><div class="lbl">Avg Score</div></div>
+    <div class="a-stat"><div class="val">${Math.round(avg/50*100)}%</div><div class="lbl">Avg %</div></div>
+    <div class="a-stat"><div class="val" style="font-size:0.9rem;margin-top:4px">${topLevel}</div><div class="lbl">Top Level</div></div>`;
+  const tm={};
+  students.forEach(s=>{questions.forEach((q,i)=>{
+    if(!tm[q.topic])tm[q.topic]={c:0,t:0};tm[q.topic].t++;
+    const ua=s.answers&&s.answers[i]?(s.answers[i]+'').toLowerCase().trim():null;
+    if(ua===q.answer)tm[q.topic].c++;
+  });});
+  const arr=Object.entries(tm).map(([t,v])=>({t,pct:v.c/v.t})).sort((a,b)=>a.pct-b.pct);
+  document.getElementById('weakness-list').innerHTML=arr.map((t,i)=>{
+    const p=Math.round(t.pct*100);const col=t.pct>=0.7?'#0D9488':t.pct>=0.4?'#D97706':'#DC2626';
+    return`<div class="weakness-row"><div class="w-rank">${i+1}</div><div class="w-name">${t.t}</div><div class="w-bar-wrap"><div class="w-bar" style="width:${p}%;background:${col}"></div></div><div class="w-pct" style="color:${col}">${p}%</div></div>`;
+  }).join('');
+  const bands=[{l:'0–10',min:0,max:10},{l:'11–18',min:11,max:18},{l:'19–25',min:19,max:25},{l:'26–32',min:26,max:32},{l:'33–39',min:33,max:39},{l:'40–46',min:40,max:46},{l:'47–50',min:47,max:50}];
+  const cnts=bands.map(b=>scores.filter(s=>s>=b.min&&s<=b.max).length);
+  const mx=Math.max(...cnts,1);
+  document.getElementById('dist-bars').innerHTML=bands.map((b,i)=>`
+    <div class="dist-bar-col">
+      <div class="dist-bar-count">${cnts[i]||''}</div>
+      <div class="dist-bar-fill" style="height:${Math.round(cnts[i]/mx*80)}px"></div>
+      <div class="dist-bar-label">${b.l}</div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
